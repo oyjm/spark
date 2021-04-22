@@ -114,9 +114,10 @@ public class RadixSort {
     // If all the byte values at a particular index are the same we don't need to count it.
     long bitwiseMax = 0;
     long bitwiseMin = -1L;
-    long maxOffset = array.getBaseOffset() + numRecords * 8L;
+    long baseOffset = array.getBaseOffset();
+    long maxOffset = baseOffset + numRecords * 8L;
     Object baseObject = array.getBaseObject();
-    for (long offset = array.getBaseOffset(); offset < maxOffset; offset += 8) {
+    for (long offset = baseOffset; offset < maxOffset; offset += 8) {
       long value = Platform.getLong(baseObject, offset);
       bitwiseMax |= value;
       bitwiseMin &= value;
@@ -127,7 +128,7 @@ public class RadixSort {
       if (((bitsChanged >>> (i * 8)) & 0xff) != 0) {
         counts[i] = new long[256];
         // TODO(ekl) consider computing all the counts in one pass.
-        for (long offset = array.getBaseOffset(); offset < maxOffset; offset += 8) {
+        for (long offset = baseOffset; offset < maxOffset; offset += 8) {
           counts[i][(int)((Platform.getLong(baseObject, offset) >>> (i * 8)) & 0xff)]++;
         }
       }
